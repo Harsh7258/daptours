@@ -1,18 +1,32 @@
+const fs = require('fs');
 const express = require('express');
 // function on calling add many methods the app function. 
 
 const app = express();
 
-app.get('/', (req, res) => {
-    res.status(200).json({message:'Hello from the API!!', app: 'daptours'});
-    // in the format of json on the server.
-});
-// get request on the server on this URL '/'
+// app.get('/', (req, res) => {
+//     res.status(200).json({message:'Hello from the API!!', app: 'daptours'});
+//     // in the format of json on the server.
+// });
+// get(read) request on the server on this URL '/'
+
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`));
+
+// route handler --> in express terms
+app.get('/api/v1/tours', (req, res) => {
+    res.status(200).json({
+        status: 'success',
+        results: tours.length,
+        data: {
+            tours
+        }
+    })
+})
 
 app.post('/', (req, res) => {
     res.send('you can post to this endpoint...')
 });
-// post request on server on same URL '/'
+// post(create) request on server on same URL '/'
 
 const port = 3000;
 app.listen(port, () => {
