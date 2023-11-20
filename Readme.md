@@ -1,5 +1,7 @@
 # daptours
 
+Tour planner website with API.
+
 ## npm packages
 
 1. express version 4
