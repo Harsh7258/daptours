@@ -6,6 +6,7 @@ Tour planner website with API.
 
 1. express version 4
 2. nodemon
+3. morgan --> 3rd party middleware
 
 ### starting steps
 

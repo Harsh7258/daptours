@@ -1,22 +1,46 @@
 const fs = require('fs');
 const express = require('express');
+const morgan = require('morgan');
 // function on calling add many methods the app function. 
 
 const app = express();
 
+// 1. MIDDLEWARES
+app.use(morgan('dev'));
+// using 3rd party middleware
+
 app.use(express.json());
 // sets middleware 
 
-// app.get('/', (req, res) => {
-//     res.status(200).json({message:'Hello from the API!!', app: 'daptours'});
-//     // in the format of json on the server.
-// });
-// get(read) request on the server on this URL '/'
+app.use((req, res, next) => {
+    console.log('Hello midlleware!!');
+    next();
+});
+
+app.use((req, res, next) => {
+    req.requestTime = new Date().toISOString();
+    next();
+})
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`));
 
-// route handler --> in express terms
-app.get('/api/v1/tours/:id', (req, res) => {
+// 2. ROUTE HANDLERS
+const getAllTours = (req, res) => {
+
+    console.log(req.params);
+    console.log(req.requestTime);
+
+    res.status(200).json({
+        status: 'success',
+        requestedAt: req.requestTime,
+        results: tours.length,
+        data: {
+            tours
+        }
+    });
+};
+
+const getTour = (req, res) => {
 
     console.log(req.params);
 
@@ -39,9 +63,9 @@ app.get('/api/v1/tours/:id', (req, res) => {
             tour
         }
     });
-});
+}
 
-app.post('/api/v1/tours', (req, res) => {
+const createTour = (req, res) => {
     // console.log(req.body);
     // res.send('done');
 
@@ -58,31 +82,26 @@ app.post('/api/v1/tours', (req, res) => {
             }
         });
     });
-});
+};
 
-// app.post('/', (req, res) => {
-//     res.send('you can post to this endpoint...')
-// });
-// post(create) request on server on same URL '/'
+const updateTour = (req, res) => {
 
-// app.patch('/api/v1/tours/:id', (req, res) => {
+    if(req.params.id * 1 > tours.length) {
+        return res.status(404).json({
+            status: 'Fail',
+            message: 'Invalid ID'
+        })
+    }
 
-//     if(req.params.id * 1 > tours.length) {
-//         return res.status(404).json({
-//             status: 'Fail',
-//             message: 'Invalid ID'
-//         })
-//     }
+    res.status(200).json({
+        status: 'success',
+        data: {
+            tour: '<Updated tour here...>'
+        }
+    })
+};
 
-//     res.status(200).json({
-//         status: 'success',
-//         data: {
-//             tour: '<Updated tour here...>'
-//         }
-//     })
-// })
-
-app.delete('/api/v1/tours/:id', (req, res) => {
+const deleteTour = (req, res) => {
 
     if(req.params.id * 1 > tours.length) {
         return res.status(404).json({
@@ -95,8 +114,29 @@ app.delete('/api/v1/tours/:id', (req, res) => {
         status: 'success',
         data: null
     })
-})
+};
 
+// route handler --> in express terms
+// app.get('/api/v1/tours', getAllTours);
+// app.post('/api/v1/tours', createTour);
+// app.get('/api/v1/tours/:id', getTour);
+// app.patch('/api/v1/tours/:id', updateTour);
+// app.delete('/api/v1/tours/:id', deleteTour);
+
+// Route --> use for same URLs
+// 3. ROUTES
+app
+.route('/api/v1/tours')
+.get(getAllTours)
+.post(createTour);
+
+app
+.route('/api/v1/tours/:id')
+.get(getTour)
+.patch(updateTour)
+.delete(deleteTour);
+
+// 4. START SERVER
 const port = 3000;
 app.listen(port, () => {
     console.log(`App in running on the ${port}...`);
