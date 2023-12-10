@@ -7,12 +7,17 @@ const userRouter = require('./routes/userRoutes');
 
 const app = express();
 
-// 1. MIDDLEWARES
-app.use(morgan('dev'));
-// using 3rd party middleware
+if(!process.env.NODE_ENV === 'development') {
+    // 1. MIDDLEWARES
+    app.use(morgan('dev'));
+    // using 3rd party middleware
+}
 
 app.use(express.json());
 // sets middleware 
+
+app.use(express.static(`${__dirname}/public`));
+// .static --> serving static files
 
 app.use((req, res, next) => {
     console.log('Hello midlleware!!');
