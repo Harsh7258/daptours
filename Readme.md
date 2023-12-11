@@ -7,6 +7,11 @@ Tour planner website with API.
 1. express version 4
 2. nodemon
 3. morgan --> 3rd party middleware
+4. dotenv --> for environment variables
+5. eslint
+   prettier
+   eslint-config-prettier eslint-plugin-prettier
+   eslint-config-airbnb eslint-plugin-node eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react
 
 ### starting steps
 
