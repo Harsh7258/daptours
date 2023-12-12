@@ -5,16 +5,6 @@ const Tour = require('./../modals/tourModal');
 // 2. ROUTE HANDLERS or CONTROLLERS
 // route handler --> in express terms
 
-exports.checkBody = (req, res, next) => {
-    if(!req.body.name || !req.body.price) {
-        return res.status(400).json({
-            status: 'FAIL',
-            message: 'Missing name or price'
-        });
-    };
-    next();
-};
-
 // TOURS
 exports.getAllTours = (req, res) => {
 
@@ -49,13 +39,27 @@ exports.getTour = (req, res) => {
     // });
 }
 
-exports.createTour = (req, res) => {
+exports.createTour = async (req, res) => {
+    try {
+        // cosnt newTour = new Tour({});
+        // newTour.save();
+        // another way of creating document
+
+    const newTour = await Tour.create(req.body);
+    // using async await because Tour.create returns a promise
+
     res.status(201).json({
         status: 'success',
-        // data: {
-        //     tour: newTour
-        // }
+        data: {
+            tour: newTour
+        }
     });
+    } catch (error) {
+        res.status(400).json({
+            status: 'Failed',
+            message: error
+        })
+    }
 };
 
 exports.updateTour = (req, res) => {

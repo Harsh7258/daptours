@@ -59,3 +59,16 @@ exports.checkID = (req, res, next, val) => {
     };
     next(); // next --> used to becasue without it request response cycle will get stuck in this middleware fucntion
 };
+
+5. FILE NAME
+// tourController --> checkBody Controller
+
+exports.checkBody = (req, res, next) => {
+    if(!req.body.name || !req.body.price) {
+        return res.status(400).json({
+            status: 'FAIL',
+            message: 'Missing name or price'
+        });
+    };
+    next();
+};
