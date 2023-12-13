@@ -6,38 +6,50 @@ const Tour = require('./../modals/tourModal');
 // route handler --> in express terms
 
 // TOURS
-exports.getAllTours = (req, res) => {
+exports.getAllTours = async (req, res) => {
 
-    console.log(req.params);
-    console.log(req.requestTime);
+    try {
+    const tours = await Tour.find();
+    // to find all documents/data 
 
-    res.status(200).json({
-        status: 'success',
-        requestedAt: req.requestTime,
-        // results: tours.length,
-        // data: {
-        //     tours
-        // }
-    });
+    // console.log(req.params);
+    // console.log(req.requestTime);
+
+        res.status(200).json({
+            status: 'success',
+            // requestedAt: req.requestTime,
+            results: tours.length,
+            data: {
+                tours
+            }
+        });
+    } catch (error) {
+        res.status(404).json({
+            status: 'Fail',
+            message: error
+        });
+    };
 };
 
-exports.getTour = (req, res) => {
+exports.getTour = async (req, res) => {
 
-    console.log(req.params);
+    try {
+        const tour = await Tour.findById(req.params.id);
+        // findById just for id in the data
 
-    const id = req.params.id * 1;
-    // to convert any string into number multiply it with number.
-
-    // const tour = tours.find(el => el.id === id);
-    // // find --> array method to find data according to the ID (:id/5... or any number)
-
-    // res.status(200).json({
-    //     status: 'success',
-    //     data: {
-    //         tour
-    //     }
-    // });
-}
+        res.status(200).json({
+            status: 'success',
+            data: {
+                tour
+            }
+        });
+    } catch (error) {
+        res.status(404).json({
+            status: 'Fail',
+            message: error
+        });
+    };
+};
 
 exports.createTour = async (req, res) => {
     try {
@@ -58,22 +70,44 @@ exports.createTour = async (req, res) => {
         res.status(400).json({
             status: 'Failed',
             message: error
-        })
+        });
+    };
+};
+
+exports.updateTour = async (req, res) => {
+    try {
+        const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            // new:true to return the modified document rather than the original
+            runValidators: true
+        });
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                tour
+            }
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: 'Failed',
+            message: error
+        });
     }
 };
 
-exports.updateTour = (req, res) => {
-    res.status(200).json({
-        status: 'success',
-        data: {
-            tour: '<Updated tour here...>'
-        }
-    })
+exports.deleteTour = async (req, res) => {
+    try {
+        await Tour.findByIdAndDelete(req.params.id)
+        res.status(204).json({
+            status: 'success',
+            data: null
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: 'Failed',
+            message: error
+        });
+    }
 };
-
-exports.deleteTour = (req, res) => {
-    res.status(204).json({
-        status: 'success',
-        data: null
-    })
-};
+// in RESTful API it is commom practice not to send back any data to the client when there was DELETE operations

@@ -72,3 +72,12 @@ exports.checkBody = (req, res, next) => {
     };
     next();
 };
+
+// getTour -- 
+// console.log(req.params);
+
+    const id = req.params.id * 1;
+    // to convert any string into number multiply it with number.
+
+    // const tour = tours.find(el => el.id === id);
+    // // find --> array method to find data according to the ID (:id/5... or any number)
