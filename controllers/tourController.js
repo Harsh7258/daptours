@@ -7,14 +7,30 @@ const Tour = require('./../modals/tourModal');
 
 // TOURS
 exports.getAllTours = async (req, res) => {
-
     try {
-    const tours = await Tour.find();
+
+        //BUILD QUERY
+        // FILTERING THE API
+        const queryObj = {...req.query};
+        const excludedFields = ['page', 'fields', 'limit', 'sort'];
+        excludedFields.forEach(el => delete queryObj[el]);
+
+        // ADVANCE FILTERING 
+        let queryStr = JSON.stringify(queryObj);
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+        // gte = greater than equal to, lt = less than, gt = great than
+        console.log(JSON.parse(queryStr));
+
+    const query = Tour.find(JSON.parse(queryStr));
     // to find all documents/data 
 
     // console.log(req.params);
     // console.log(req.requestTime);
 
+    // EXECUTE QUERY
+    const tours = await query;
+
+        // SEND RESPONSE
         res.status(200).json({
             status: 'success',
             // requestedAt: req.requestTime,
