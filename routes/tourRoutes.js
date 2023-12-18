@@ -7,6 +7,8 @@ const tourController = require('./../controllers/tourController');
 const router = express.Router();
 // ROUTER middleware 
 
+router.route('/top-5-cheap-tours').get(tourController.aliasTopTours, tourController.getAllTours);
+
 // router.param('id', tourController.checkID);
 
 router

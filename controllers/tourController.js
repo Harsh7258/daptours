@@ -10,19 +10,52 @@ exports.getAllTours = async (req, res) => {
     try {
 
         //BUILD QUERY
-        // FILTERING THE API
+        // 1.1 FILTERING THE API
         const queryObj = {...req.query};
         const excludedFields = ['page', 'fields', 'limit', 'sort'];
         excludedFields.forEach(el => delete queryObj[el]);
 
-        // ADVANCE FILTERING 
+        // 1.2 ADVANCE FILTERING 
         let queryStr = JSON.stringify(queryObj);
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
         // gte = greater than equal to, lt = less than, gt = great than
         console.log(JSON.parse(queryStr));
 
-    const query = Tour.find(JSON.parse(queryStr));
+    let query = Tour.find(JSON.parse(queryStr));
     // to find all documents/data 
+
+    // 2. SORTING
+    if(req.query.sort) {
+        const sortBy = req.query.sort.split(',').join(' ');
+        console.log(sortBy);
+        query = query.sort(sortBy);
+    } else {
+        query = query.sort('-createdAt');
+        // set according time
+    }
+
+    // 3. LIMITING FIELDS
+    if (req.query.fields) {
+        const fields = req.query.fields.split(',').join(' ');
+        console.log(fields);
+        query.select(fields);
+    } else {
+        query = query.select('-__v');
+        // exclude this field
+    }
+
+    // 4. PAGINATION
+    const pages = req.query.page *  1 || 1;
+    // converts string into a number
+    const limit = req.query.limit * 1 || 100;
+    const skip = (pages - 1) * limit;
+
+    query = query.skip(skip).limit(limit);
+
+    if(req.query.page){
+        const numTours = await Tour.countDocuments();
+        if(skip >= numTours) throw new Error('This page does not exists!!');
+    }
 
     // console.log(req.params);
     // console.log(req.requestTime);
@@ -127,3 +160,10 @@ exports.deleteTour = async (req, res) => {
     }
 };
 // in RESTful API it is commom practice not to send back any data to the client when there was DELETE operations
+
+exports.aliasTopTours = (req, res, next) => {
+    req.query.limit = '5';
+    req.query.sort = '-ratingAverage,price';
+    req.query.fields = 'name,price,ratingAverage,summary,difficulty';
+    next();
+}
