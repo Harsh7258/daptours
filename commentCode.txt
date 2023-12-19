@@ -81,3 +81,17 @@ exports.checkBody = (req, res, next) => {
 
     // const tour = tours.find(el => el.id === id);
     // // find --> array method to find data according to the ID (:id/5... or any number)
+
+6. FILE NAME
+   tourModal --> DOCUMENT MIDDLEWARE
+   
+    // tourSchema.pre('save', function(next) {
+    //     console.log('Will save the document...');
+    //     next();
+    //     
+    // });
+
+    // tourSchema.post('save', function(doc, next) {
+    //     console.log(doc);
+    //     next();
+    // });

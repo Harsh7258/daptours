@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify");
 
 const tourSchema = new mongoose.Schema({
     name: {
@@ -9,6 +10,7 @@ const tourSchema = new mongoose.Schema({
         unique: true,
         trim: true
     },
+    slug: String,
     duration: {
         type: Number,
         required: [true, 'Trip duration is required!']
@@ -52,9 +54,57 @@ const tourSchema = new mongoose.Schema({
         type: Date,
         default: Date.now()
     },
-    startDates: [Date]
+    startDates: [Date],
+    secretTour: {
+        type: Boolean,
+        default: false
+    }
+},
+{
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
 });
 // mongoose.Schema to specify a schema for data
+
+// VIRTUAL PROPERTIES
+tourSchema.virtual('duratinInWEEKS').get(function() {
+    return this.duration / 7;
+    // using simple function because it supports this keyword that arrow func cant
+}); 
+
+// DOCUMENT MIDDLEWARE: runs before .save() and .create()
+tourSchema.pre('save', function(next){
+    // 'save is hook here
+    // console.log(this);
+
+    this.slug = slugify(this.name, { lower: true });
+    next(); // without next request will get stuck
+
+}); // pre save hook
+
+// QUERY MIDDLEWARE
+// tourSchema.pre('find', function(next) {
+tourSchema.pre(/^find/, function(next) {
+    // find hook
+    this.find({ secretTour: { $ne: true } });
+
+    this.start = Date.now();
+    next();
+}); // query can be visible in database but not in postman beacuse secretTour is filtered out
+
+tourSchema.post(/^find/, function(docs, next) {
+    console.log(`Query took ${Date.now() - this.start} milliseconds!!`);
+    // console.log(docs);
+    next();
+});
+
+// AGGREGATE MIDDLEWARE
+tourSchema.pre('aggregate', function(next) {
+    
+    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+    console.log(this.pipeline());
+    next();
+}); // hides the secretTour from tour-stats
 
 const Tour = mongoose.model('Tour', tourSchema);
 
