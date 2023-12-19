@@ -11,7 +11,9 @@ Tour planner website with API.
 5. eslint
    prettier
    eslint-config-prettier eslint-plugin-prettier
-   eslint-config-airbnb eslint-plugin-node eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react 6. Slugify
+   eslint-config-airbnb eslint-plugin-node eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react
+6. Slugify
+7. Validator
 
 ### starting steps
 
