@@ -14,6 +14,7 @@ Tour planner website with API.
    eslint-config-airbnb eslint-plugin-node eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react
 6. Slugify
 7. Validator
+8. NDB --> ndoe debugger
 
 ### starting steps
 
