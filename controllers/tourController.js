@@ -1,5 +1,7 @@
 const Tour = require('./../modals/tourModal');
 const APIFeatures = require('./../utils/apiFeatures');
+const catchAsync = require('./../utils/catchAsync');
+const AppError = require('./../utils/appError');
 
 // const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
 
@@ -7,9 +9,7 @@ const APIFeatures = require('./../utils/apiFeatures');
 // route handler --> in express terms
 
 // TOURS
-exports.getAllTours = async (req, res) => {
-    try {
-
+exports.getAllTours = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY
     const features = new APIFeatures(Tour.find(), req.query)
     .filter()
@@ -32,19 +32,16 @@ exports.getAllTours = async (req, res) => {
                 tours
             }
         });
-    } catch (error) {
-        res.status(404).json({
-            status: 'Fail',
-            message: error
-        });
-    };
-};
+});
 
-exports.getTour = async (req, res) => {
+exports.getTour = catchAsync(async (req, res, next) => {
 
-    try {
-        const tour = await Tour.findById(req.params.id);
+    const tour = await Tour.findById(req.params.id);
         // findById just for id in the data
+
+        if(!tour) {
+            return next(new AppError('NO tour found with this ID!!', 404))
+        };
 
         res.status(200).json({
             status: 'success',
@@ -52,16 +49,9 @@ exports.getTour = async (req, res) => {
                 tour
             }
         });
-    } catch (error) {
-        res.status(404).json({
-            status: 'Fail',
-            message: error
-        });
-    };
-};
+});
 
-exports.createTour = async (req, res) => {
-    try {
+exports.createTour = catchAsync(async (req, res, next) => {
         // cosnt newTour = new Tour({});
         // newTour.save();
         // another way of creating document
@@ -75,21 +65,19 @@ exports.createTour = async (req, res) => {
             tour: newTour
         }
     });
-    } catch (error) {
-        res.status(400).json({
-            status: 'Failed',
-            message: error
-        });
-    };
-};
+});
 
-exports.updateTour = async (req, res) => {
-    try {
-        const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+exports.updateTour = catchAsync(async (req, res, next) => {
+    
+    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             // new:true to return the modified document rather than the original
             runValidators: true
         });
+    
+        if(!tour) {
+            return next(new AppError('NO tour found with this ID!!', 404))
+        };
 
         res.status(200).json({
             status: 'success',
@@ -97,28 +85,21 @@ exports.updateTour = async (req, res) => {
                 tour
             }
         });
-    } catch (error) {
-        res.status(400).json({
-            status: 'Failed',
-            message: error
-        });
-    }
-};
+});
 
-exports.deleteTour = async (req, res) => {
-    try {
-        await Tour.findByIdAndDelete(req.params.id)
+exports.deleteTour = catchAsync(async (req, res, next) => {
+
+    const tour = await Tour.findByIdAndDelete(req.params.id);
+
+    if(!tour) {
+        return next(new AppError('NO tour found with this ID!!', 404))
+    };
+    
         res.status(204).json({
             status: 'success',
             data: null
         });
-    } catch (error) {
-        res.status(400).json({
-            status: 'Failed',
-            message: error
-        });
-    }
-};
+});
 // in RESTful API it is commom practice not to send back any data to the client when there was DELETE operations
 
 exports.aliasTopTours = (req, res, next) => {
@@ -130,8 +111,8 @@ exports.aliasTopTours = (req, res, next) => {
 
 // 1.1 AGGREGATION PIPELINE --> framework for data aggregation, used for calculating averages
 // MATCHING AND GROUPING
-exports.getToursStats = async (req, res) => {
-    try {
+exports.getToursStats = catchAsync(async (req, res, next) => {
+
         const stats = await Tour.aggregate([
             // {
             //     $match: { ratingsAverage: { $gte: 4.5 } }
@@ -163,18 +144,11 @@ exports.getToursStats = async (req, res) => {
             }
         });
         // console.log(stats);
-        
-    } catch (error) {
-        res.status(400).json({
-            status: 'Failed',
-            message: error
-        });
-    };
-};
+});
 
 // 1.2 AGGREGATION PIPELINE: UWINDING AND PROJECTING
-exports.getMonthlyPlan = async (req, res) => {
-    try {
+exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
+
         const year = req.params.year * 1; //2021
 
         const plan = await Tour.aggregate([
@@ -224,11 +198,4 @@ exports.getMonthlyPlan = async (req, res) => {
             }
         });
         // console.log(plan);
-
-    } catch (error) {
-        res.status(400).json({
-            status: 'Failed',
-            message: error
-        });
-    };
-};
+});
