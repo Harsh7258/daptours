@@ -1,6 +1,9 @@
-const express = require('express');
-const morgan = require('morgan');
+const express = require("express");
+const morgan = require("morgan");
 // function on calling add many methods the app function. 
+
+const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/errorController');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -20,11 +23,6 @@ app.use(express.static(`${__dirname}/public`));
 // .static --> serving static files
 
 app.use((req, res, next) => {
-    console.log('Hello midlleware!!');
-    next();
-});
-
-app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
     next();
 });
@@ -42,6 +40,15 @@ app.use((req, res, next) => {
 // 3. ROUTES
 app.use('/api/v1/tours', tourRouter); // tourRouter --> middleware function
 app.use('/api/v1/users', userRouter); // userRouter --> middleware function
+
+// HANDLING UNHANDLED ROUTES
+app.all('*', (req, res, next) => {
+     next(new AppError(`Cant find ${req.originalUrl} on this server!!`, 404)); // anything pass on next it will automatic directed to the error middleware
+
+});
+
+// BETTER ERRORS and REFACTORING
+app.use(globalErrorHandler);
 
 // 4. START SERVER
 module.exports = app;

@@ -95,3 +95,21 @@ exports.checkBody = (req, res, next) => {
     //     console.log(doc);
     //     next();
     // });
+
+    7. FILE NAME
+    app.js --> 
+    // app.use((req, res, next) => {
+    //     console.log('Hello midlleware!!');
+    //     next();
+    // });
+    // demo middleware
+
+    -- ERROR HANDLING MIDDLEWARE
+    // res.status(404).json({
+    //     status: 'FAIL',
+    //     message: `Cant find ${req.originalUrl} on this server!`
+    // });
+
+    // const err = new Error(`Cant find ${req.originalUrl} on this server!`);
+    // err.status = 'FAIL';
+    // err.statusCode = 404;
