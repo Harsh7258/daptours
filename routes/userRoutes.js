@@ -1,11 +1,14 @@
 const express = require('express');
 const userController = require('./../controllers/userController');
+const authController = require('./../controllers/authController');
 
 // Route --> use for same URLs
 // 3. ROUTES
 
 const router = express.Router();
 // ROUTER middleware 
+
+router.post('/signup', authController.signup); // route to create new user
 
 router
 .route('/')
