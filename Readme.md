@@ -20,6 +20,7 @@ Tour planner website with API.
 6. Slugify
 7. Validator
 8. NDB --> ndoe debugger in chromium -- npm run debug
+9. bcrpyt --> encryption of password
 
 ### starting steps
 
