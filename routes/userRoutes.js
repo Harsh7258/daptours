@@ -9,6 +9,7 @@ const router = express.Router();
 // ROUTER middleware 
 
 router.post('/signup', authController.signup); // route to create new user
+router.post('/login', authController.login); // route to create login
 
 router
 .route('/')

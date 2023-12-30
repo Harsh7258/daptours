@@ -1,6 +1,7 @@
 # daptours
 
 Tour planner website with API.
+_JWT_EXPIRES_IN 90 DAYS_
 
 ## npm packages
 
@@ -21,6 +22,7 @@ Tour planner website with API.
 7. Validator
 8. NDB --> ndoe debugger in chromium -- npm run debug
 9. bcrpyt --> encryption of password
+10. jsonwebtoken --> to create JWT for authentication
 
 ### starting steps
 
