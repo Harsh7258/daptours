@@ -54,3 +54,26 @@ exports.login = catchAsync(async(req, res, next) => {
         token
     });
 });
+
+// PROTECTING TOUR ROUTES
+exports.protect = catchAsync(async (req, res, next) => {
+    let token;
+
+    // 1. getting token and check of its there
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1]; 
+    };
+    // console.log(token);
+
+    if(!token) {
+        return next(new AppError('You are not logged in! Please log in.', 401));
+    };
+    
+    // 2. verifiction token
+
+    // 3. check if user still exists
+
+    // 4. check if user changed password after the token was issued
+
+    next();
+}); // middleware

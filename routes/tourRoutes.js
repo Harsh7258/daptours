@@ -1,5 +1,6 @@
 const express = require('express');
 const tourController = require('./../controllers/tourController');
+const authController = require('./../controllers/authController');
 
 // Route --> use for same URLs
 // 3. ROUTES
@@ -17,9 +18,10 @@ router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
 
 router
 .route('/')
-.get(tourController.getAllTours)
+.get(authController.protect, tourController.getAllTours)
 .post(tourController.createTour);
 // chaining mutliple middlewares
+// PROTECT middleware runs first then getAllTours to check if user is logged in(autherization token).
 
 router
 .route('/:id')
