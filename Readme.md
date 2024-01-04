@@ -1,5 +1,6 @@
 # daptours
 
+using MERN stack
 Tour planner website with API.
 _JWT_EXPIRES_IN 90 DAYS_
 
