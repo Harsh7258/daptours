@@ -34,3 +34,16 @@ _JWT_EXPIRES_IN 90 DAYS_
 5. package.json --> "scripts" { "start": "nodemon app.js"}
 6. \_\_dirname --> locate current folder (daptours)
 7. fs.readFileSync() --> method, we can read files in a synchronous way
+
+#### Postman
+
+ADVANCE postman setup ->
+Setting UP environment in postman
+
+1. Two environments - Dev: Daptours
+   Prod: Daptours
+2. setting variable - URL : http://127.0.0.1:3000/
+   current variable to - http://127.0.0.1:3000/
+3. TESTS in requests - pm.environment.set("jwt", pm.response.json().token);
+   to save JSONwebToekn in environment.
+4. Authorization in GET allTours - Bearer Token > {{jwt}}

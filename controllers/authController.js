@@ -1,3 +1,4 @@
+const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('./../modals/userModal');
 const catchAsync = require('./../utils/catchAsync');
@@ -70,10 +71,25 @@ exports.protect = catchAsync(async (req, res, next) => {
     };
     
     // 2. verifiction token
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET); // using token to verify the user
+    // console.log(decoded);
 
     // 3. check if user still exists
+    const currentUser = await User.findById(decoded.id);
+    if(!currentUser) {
+        return next(new AppError(
+            'The user belonging to this token does no longer exists.', 401
+        ));
+    }; // if user delete the login id toekn deleted someone cant login to the same token
 
     // 4. check if user changed password after the token was issued
+    if (currentUser.changedPasswordAfter(decoded.iat)) {
+        return next(new AppError('User recently changed password! Please login again.', 401));
+    };
 
-    next();
+
+    //GRANT ACCESS TO PROTECTED ROUTE
+    req.user = currentUser;
+    next(); //leads to next middleware
+
 }); // middleware

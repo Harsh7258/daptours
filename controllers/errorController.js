@@ -55,6 +55,11 @@ const sendErrorProd = (err, res) => {
     };
 };
 
+// PROTECTING TOUR ROUTES
+
+const handleJsonWebTokenError = () => new AppError('INVAILD JWT!!', 401);
+const handleExpiredJWT = () => new AppError('JWT is expired!, Please Login Again.', 401);
+
 module.exports = (err, req, res, next) => {
     // console.log(err.stack);
 
@@ -69,6 +74,8 @@ module.exports = (err, req, res, next) => {
         if (error.name === 'CastError') error = handleCastErrorDB(error); 
         // if(error.code === 11000) error = handleDuplicateFields(error);
         if (error.name === 'ValidationError') error = handleValidationError(error);
+        if(error.name === 'JsonWebTokenError') error = handleJsonWebTokenError();
+        if(error.name === 'TokenExpiredError') error = handleExpiredJWT();
 
         sendErrorProd(error, res);
     };

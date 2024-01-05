@@ -30,7 +30,8 @@ const userSchema = new mongoose.Schema({
                 return el === this.password;
             }
         }
-    }
+    }, 
+    passwordChangedAt: Date
 });
 
 // pre-save middleware
@@ -47,10 +48,24 @@ userSchema.pre('save', async function(next) {
     next();
 });
 
-// INSTANCE METHOD
+// INSTANCE METHOD -- methods can be acessed from any file
+
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
     return await bcrypt.compare(candidatePassword, userPassword); // function returns true or false if password is same or not
-};
+}; 
+
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+    if(this.passwordChangedAt) {
+        const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+        // console.log(this.passwordChangedAt, JWTTimestamp);
+
+        // console.log(changedTimestamp, JWTTimestamp);
+        return JWTTimestamp < changedTimestamp; // 100 < 200
+    }
+
+    // False means NOT changed
+    return false;
+}
 
 const User = mongoose.model('User', userSchema); // creates model for user schema
 
