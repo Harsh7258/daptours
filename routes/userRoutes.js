@@ -20,6 +20,6 @@ router
 .route('/:id')
 .get(userController.getUsers)
 .patch(userController.updateUser)
-.delete(userController.deleteUser);
+.delete( userController.deleteUser);
 
 module.exports = router;
