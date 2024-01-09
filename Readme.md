@@ -48,3 +48,9 @@ Setting UP environment in postman
 3. TESTS in requests - pm.environment.set("jwt", pm.response.json().token);
    to save JSONwebToekn in environment.
 4. Authorization in GET allTours - Bearer Token > {{jwt}}
+
+##### Mailtrap
+
+EMAIL Testing with https://mailtrap.io
+Sends Dummy mails to check the functionality of modemailer and resetToken.
+Sending email nodemailer.
