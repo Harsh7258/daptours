@@ -24,6 +24,7 @@ _JWT_EXPIRES_IN 90 DAYS_
 8. NDB --> ndoe debugger in chromium -- npm run debug
 9. bcrpyt --> encryption of password
 10. jsonwebtoken --> to create JWT for authentication
+11. nodemailer --> send email thorugh node
 
 ### starting steps
 

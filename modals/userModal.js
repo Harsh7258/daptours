@@ -1,6 +1,9 @@
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+
+// var permitted = ['admin', 'user', 'lead-guide', 'guide'];
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -17,8 +20,9 @@ const userSchema = new mongoose.Schema({
     photo: String,
     role: {
         type: String,
-        enum: ['admin', 'user', 'lead-guide', 'guide'],
+        enum:  ['admin', 'user', 'lead-guide', 'guide'],
         default: 'user'
+        // admin and lead-guide only access to delete the user 
     },
     password: {
         type: String,
@@ -36,7 +40,9 @@ const userSchema = new mongoose.Schema({
             }
         }
     }, 
-    passwordChangedAt: Date
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date
 });
 
 // pre-save middleware
@@ -70,6 +76,18 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
 
     // False means NOT changed
     return false;
+}
+
+userSchema.methods.createPasswordResetToken = function() {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    console.log({resetToken}, this.passwordResetToken);
+
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+    return resetToken
 }
 
 const User = mongoose.model('User', userSchema); // creates model for user schema
