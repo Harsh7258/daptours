@@ -1,7 +1,7 @@
 # daptours
 
-using MERN stack
-Tour planner website with API.
+using MERN stack <br>
+Tour planner website with API. <br>
 _JWT_EXPIRES_IN 90 DAYS_
 
 ## npm packages
@@ -26,7 +26,7 @@ _JWT_EXPIRES_IN 90 DAYS_
 10. jsonwebtoken --> to create JWT for authentication
 11. nodemailer --> send email thorugh node
 
-### starting steps
+## starting steps
 
 1. npm init for package.json
 2. npm i express@4
@@ -36,7 +36,7 @@ _JWT_EXPIRES_IN 90 DAYS_
 6. \_\_dirname --> locate current folder (daptours)
 7. fs.readFileSync() --> method, we can read files in a synchronous way
 
-#### Postman
+### Postman
 
 ADVANCE postman setup ->
 Setting UP environment in postman
@@ -49,8 +49,8 @@ Setting UP environment in postman
    to save JSONwebToekn in environment.
 4. Authorization in GET allTours - Bearer Token > {{jwt}}
 
-##### Mailtrap
+### Mailtrap
 
-EMAIL Testing with https://mailtrap.io
-Sends Dummy mails to check the functionality of modemailer and resetToken.
+EMAIL Testing with https://mailtrap.io <br>
+Sends Dummy mails to check the functionality of modemailer and resetToken.<br>
 Sending email nodemailer.
