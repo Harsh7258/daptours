@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         enum:  ['admin', 'user', 'lead-guide', 'guide'],
-        default: 'user'
+        default: 'admin'
         // admin and lead-guide only access to delete the user 
     },
     password: {
@@ -59,6 +59,13 @@ userSchema.pre('save', async function(next) {
     next();
 });
 
+userSchema.pre('save', function(next) {
+    if(!this.isModified('password') || this.isNew) return next();
+
+    this.passwordChangedAt = Date.now() - 1000;
+    next();
+});
+
 // INSTANCE METHOD -- methods can be acessed from any file
 
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
@@ -79,9 +86,9 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
 }
 
 userSchema.methods.createPasswordResetToken = function() {
-    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetToken = crypto.randomBytes(32).toString('hex'); // non-ecrypted token
 
-    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex'); // encrypted token
 
     console.log({resetToken}, this.passwordResetToken);
 
