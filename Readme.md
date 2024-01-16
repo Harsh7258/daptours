@@ -25,6 +25,7 @@ _JWT_EXPIRES_IN 90 DAYS_
 9. bcrpyt --> encryption of password
 10. jsonwebtoken --> to create JWT for authentication
 11. nodemailer --> send email thorugh node
+12. express-rate-limit --> for implementing rate limiting (API limiting).
 
 ## starting steps
 
