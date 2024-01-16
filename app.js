@@ -1,4 +1,5 @@
 const express = require("express");
+const rateLimit = require('express-rate-limit'); 
 const morgan = require("morgan");
 // function on calling add many methods the app function. 
 
@@ -10,11 +11,20 @@ const userRouter = require('./routes/userRoutes');
 
 const app = express();
 
+// 1. GLOBAL MIDDLEWARES
 if(!process.env.NODE_ENV === 'development') {
-    // 1. MIDDLEWARES
     app.use(morgan('dev'));
     // using 3rd party middleware
-}
+};
+
+// Implementing Rate Limiting
+const limiter = rateLimit({
+    max: 47,
+    windowMs: 60 * 60 * 1000,
+    message: 'TOO many requests from this IP, Please try again in a hour!!'
+}); // LIMITING IP requests form one users
+
+app.use('/api', limiter); //middleware
 
 app.use(express.json());
 // sets middleware 
