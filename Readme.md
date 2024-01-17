@@ -26,6 +26,9 @@ _JWT_EXPIRES_IN 90 DAYS_
 10. jsonwebtoken --> to create JWT for authentication
 11. nodemailer --> send email thorugh node
 12. express-rate-limit --> for implementing rate limiting (API limiting).
+13. express-mongo-sanitize --> Data sanitization
+14. hpp --> for preventing parameter pollution
+15. xss-clean --> data sanitization against XSS
 
 ## starting steps
 
