@@ -3,6 +3,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
+// const  sanitizeHTML = require('sanitize-html');
 const xss = require('xss-clean');
 const morgan = require("morgan");
 // function on calling add many methods the app function. 
