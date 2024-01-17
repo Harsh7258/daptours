@@ -1,5 +1,9 @@
 const express = require("express");
 const rateLimit = require('express-rate-limit'); 
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const hpp = require('hpp');
+const xss = require('xss-clean');
 const morgan = require("morgan");
 // function on calling add many methods the app function. 
 
@@ -12,6 +16,11 @@ const userRouter = require('./routes/userRoutes');
 const app = express();
 
 // 1. GLOBAL MIDDLEWARES
+
+// Set security HTTP headers
+app.use(helmet());
+
+// Development Logging
 if(!process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
     // using 3rd party middleware
@@ -26,12 +35,31 @@ const limiter = rateLimit({
 
 app.use('/api', limiter); //middleware
 
-app.use(express.json());
-// sets middleware 
+// Body parser, reading data from body into req.body
+app.use(express.json({ limit: '10kb' })); // sets middleware
 
+// Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+// Data sanitization against XSS
+app.use(xss()); // cross-site scripting protects from malicious HTML code(tags)
+
+app.use(hpp({
+    whitelist: [
+        'duration',
+        'ratingQuantity',
+        'ratingAverage',
+        'maxGroupSize',
+        'difficulty',
+        'price'
+    ]
+}));
+
+// Serving static files
 app.use(express.static(`${__dirname}/public`));
 // .static --> serving static files
 
+// Test middleware
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
     // console.log(req.headers);
