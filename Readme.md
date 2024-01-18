@@ -39,6 +39,8 @@ _JWT_EXPIRES_IN 90 DAYS_
 5. package.json --> "scripts" { "start": "nodemon app.js"}
 6. \_\_dirname --> locate current folder (daptours)
 7. fs.readFileSync() --> method, we can read files in a synchronous way
+8. node ./dev-data/data/import-dev-data.js --delete --> to delete existing demo data
+9. node ./dev-data/data/import-dev-data.js --import --> to import new json file data
 
 ### Postman
 
