@@ -27,7 +27,7 @@ const tourSchema = new mongoose.Schema({
         type: String,
         required: [true, 'A tour must have difficulty'],
         enum: {
-            values: ['easy', 'medium', 'difficulty'],
+            values: ['easy', 'medium', 'difficult'],
             message: 'Difficulty is either: EASY, MEDIUM, DIFFICULTY'
         }
     },
@@ -77,7 +77,31 @@ const tourSchema = new mongoose.Schema({
     secretTour: {
         type: Boolean,
         default: false
-    }
+    },
+    startLocation: {
+        // GeoJSON for geosaptial loactions in mongoDB
+        type: {
+            type: String,
+            default: 'Point',
+            enum: ['Point']
+        },
+        address: String,
+        description: String,
+        coordinates: [Number]
+    },
+    locations: [
+        {
+            type: {
+                type: String,
+                default: 'Point',
+                enum: ['Point']
+            },
+            address: String,
+            description: String,
+            day: Number,
+            coordinates: [Number]
+        }
+    ] // we always need to use this array, array of objects
 },
 {
     toJSON: { virtuals: true },

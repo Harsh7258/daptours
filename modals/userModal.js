@@ -20,9 +20,12 @@ const userSchema = new mongoose.Schema({
     photo: String,
     role: {
         type: String,
-        enum:  ['admin', 'user', 'lead-guide', 'guide'],
-        default: 'admin'
-        // admin and lead-guide only access to delete the user 
+        required: [true, 'A role must have user or admin value'],
+        default: 'admin',
+        enum: {
+            values: ['admin', 'user', 'lead-guide', 'guide'],
+            message: 'Admin and lead-guide only access to delete the user'
+        }
     },
     password: {
         type: String,
