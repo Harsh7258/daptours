@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
 const validator = require("validator");
+const User = require("./userModal");
 
 const tourSchema = new mongoose.Schema({
     name: {
@@ -101,7 +102,8 @@ const tourSchema = new mongoose.Schema({
             day: Number,
             coordinates: [Number]
         }
-    ] // we always need to use this array, array of objects
+    ], // we always need to use this array, array of objects
+    guides: Array
 },
 {
     toJSON: { virtuals: true },
@@ -124,6 +126,13 @@ tourSchema.pre('save', function(next){
     next(); // without next request will get stuck
 
 }); // pre save hook
+
+tourSchema.pre('save', async function(next) {
+    const guidesPromises = this.guides.map(async id => await User.findById(id));
+    this.guides = await Promise.all(guidesPromises);
+
+    next();
+});
 
 // QUERY MIDDLEWARE
 // tourSchema.pre('find', function(next) {
