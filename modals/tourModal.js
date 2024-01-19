@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
 const validator = require("validator");
-const User = require("./userModal");
+// const User = require("./userModal");
 
 const tourSchema = new mongoose.Schema({
     name: {
@@ -103,11 +103,17 @@ const tourSchema = new mongoose.Schema({
             coordinates: [Number]
         }
     ], // we always need to use this array, array of objects
-    guides: Array
+    guides: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: 'User' // setting refrences between datasets
+        }
+    ]
 },
 {
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
+    // when we have virtual property bascially a field that is not stored in the database but calcalated using other value (shows up whenever there is output)
 });
 // mongoose.Schema to specify a schema for data
 
@@ -127,12 +133,12 @@ tourSchema.pre('save', function(next){
 
 }); // pre save hook
 
-tourSchema.pre('save', async function(next) {
-    const guidesPromises = this.guides.map(async id => await User.findById(id));
-    this.guides = await Promise.all(guidesPromises);
+// tourSchema.pre('save', async function(next) {
+//     const guidesPromises = this.guides.map(async id => await User.findById(id));
+//     this.guides = await Promise.all(guidesPromises);
 
-    next();
-});
+//     next();
+// });
 
 // QUERY MIDDLEWARE
 // tourSchema.pre('find', function(next) {
@@ -143,6 +149,15 @@ tourSchema.pre(/^find/, function(next) {
     this.start = Date.now();
     next();
 }); // query can be visible in database but not in postman beacuse secretTour is filtered out
+
+tourSchema.pre(/^find/, function(next) {
+    this.populate({
+        path: 'guides',
+        select: '-__v -__passwordChangedAt'
+    });
+
+    next();
+});
 
 tourSchema.post(/^find/, function(docs, next) {
     console.log(`Query took ${Date.now() - this.start} milliseconds!!`);
