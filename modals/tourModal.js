@@ -117,11 +117,17 @@ const tourSchema = new mongoose.Schema({
 });
 // mongoose.Schema to specify a schema for data
 
-// VIRTUAL PROPERTIES
+// VIRTUAL PROPERTIES (adv. mongoose)
 tourSchema.virtual('duratinInWEEKS').get(function() {
     return this.duration / 7;
     // using simple function because it supports this keyword that arrow func cant
 }); 
+
+tourSchema.virtual('reviews', {
+    ref: 'Review',
+    foreignField: 'tour',
+    localField: '_id'
+});
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
 tourSchema.pre('save', function(next){
