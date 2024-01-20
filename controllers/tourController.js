@@ -2,6 +2,7 @@ const Tour = require('./../modals/tourModal');
 const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const factory = require('./handlerFactory');
 
 // const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
 
@@ -87,20 +88,7 @@ exports.updateTour = catchAsync(async (req, res, next) => {
         });
 });
 
-exports.deleteTour = catchAsync(async (req, res, next) => {
-
-    const tour = await Tour.findByIdAndDelete(req.params.id);
-
-    if(!tour) {
-        return next(new AppError('NO tour found with this ID!!', 404))
-    };
-    
-        res.status(204).json({
-            status: 'success',
-            data: null
-        });
-});
-// in RESTful API it is commom practice not to send back any data to the client when there was DELETE operations
+exports.deleteTour = factory.deleteOne(Tour);
 
 exports.aliasTopTours = (req, res, next) => {
     req.query.limit = '5';

@@ -12,7 +12,9 @@ const router = express.Router();
 // POST /tour/855295dew/reviews
 // GET /tour/855295dew/reviews
 
-// Implementing NESTED routes
+// router.param('id', tourController.checkID);
+
+// Implementing NESTED routes with express
 router.use('/:tourId/reviews', reviewRouter); // rediect this route to { reviewRouter }
 
 router.route('/top-5-cheap-tours').get(tourController.aliasTopTours, tourController.getAllTours);
@@ -21,7 +23,6 @@ router.route('/tour-stats').get(tourController.getToursStats);
 
 router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
 
-// router.param('id', tourController.checkID);
 
 router
 .route('/')
