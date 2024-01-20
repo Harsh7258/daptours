@@ -9,9 +9,9 @@ const router = express.Router({ mergeParams: true }); // merges the parameters t
 // GET /tour/rierjn343d/reviews
 // POST /reviews
 
-router.route('/').get(reviewController.getAllReviews).post(authController.protect, authController.restrictTo('user'), reviewController.createReview);
+router.route('/').get(reviewController.getAllReviews).post(authController.protect, authController.restrictTo('user'), reviewController.setTourUserIds, reviewController.createReview);
 // only for USER access
 
-router.route('/:id').delete(reviewController.deleteReview);
+router.route('/:id').patch(reviewController.updateReview).delete(reviewController.deleteReview);
  
 module.exports = router;

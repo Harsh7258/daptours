@@ -52,42 +52,8 @@ exports.getTour = catchAsync(async (req, res, next) => {
         });
 });
 
-exports.createTour = catchAsync(async (req, res, next) => {
-        // cosnt newTour = new Tour({});
-        // newTour.save();
-        // another way of creating document
-
-    const newTour = await Tour.create(req.body);
-    // using async await because Tour.create returns a promise
-
-    res.status(201).json({
-        status: 'success',
-        data: {
-            tour: newTour
-        }
-    });
-});
-
-exports.updateTour = catchAsync(async (req, res, next) => {
-    
-    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            // new:true to return the modified document rather than the original
-            runValidators: true
-        });
-    
-        if(!tour) {
-            return next(new AppError('NO tour found with this ID!!', 404))
-        };
-
-        res.status(200).json({
-            status: 'success',
-            data: {
-                tour
-            }
-        });
-});
-
+exports.createTour = factory.createOne(Tour);
+exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
 
 exports.aliasTopTours = (req, res, next) => {

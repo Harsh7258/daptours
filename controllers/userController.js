@@ -37,6 +37,7 @@ exports.createUsers = (req, res) => {
     });
 };
 
+// UPDATE current user
 exports.updateMe = catchAsync(async(req, res, next) => {
     //1. Create error if user POSTs password data
     if(req.body.password || req.body.passwordConfirm) {
@@ -60,6 +61,7 @@ exports.updateMe = catchAsync(async(req, res, next) => {
     });
 });
 
+// DELETE current user
 exports.deleteMe = catchAsync(async (req, res, next) => {
     await User.findByIdAndUpdate(req.user.id, { active: false });
 
@@ -76,11 +78,6 @@ exports.getUsers = (req, res) => {
     });
 };
 
-exports.updateUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet defined!'
-    });
-};
-
+// Do NOT update passwords with this!!
+exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
