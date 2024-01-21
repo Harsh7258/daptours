@@ -12,6 +12,6 @@ const router = express.Router({ mergeParams: true }); // merges the parameters t
 router.route('/').get(reviewController.getAllReviews).post(authController.protect, authController.restrictTo('user'), reviewController.setTourUserIds, reviewController.createReview);
 // only for USER access
 
-router.route('/:id').patch(reviewController.updateReview).delete(reviewController.deleteReview);
+router.route('/:id').get(reviewController.getReview).patch(reviewController.updateReview).delete(reviewController.deleteReview);
  
 module.exports = router;

@@ -16,26 +16,19 @@ const filterObj = (obj, ...allowedFields) => {
     return newObj;
 };
 
-// USERS hanlders
-exports.getAllUsers = catchAsync(async(req, res, next) => {
-    const users = await User.find(); //find query
-
-    //SEND RESPONSE
-    res.status(200).json({
-        status: 'success',
-        results: users.length,
-        data: {
-            users
-        }
-    });
-});
 
 exports.createUsers = (req, res) => {
     res.status(500).json({
         status: 'error',
-        message: 'This route is not yet defined!'
+        message: 'This route is not defined! Use /signup instead.'
     });
 };
+
+// GET current user
+exports.getMe = (req, res, next) => {
+    req.params.id = req.user.id;
+    next();
+}; // /me middleware called before getOne midlleware
 
 // UPDATE current user
 exports.updateMe = catchAsync(async(req, res, next) => {
@@ -43,16 +36,16 @@ exports.updateMe = catchAsync(async(req, res, next) => {
     if(req.body.password || req.body.passwordConfirm) {
         return next(new AppError('This route is not for password updates. Please use /updateMyPassword!!', 400));
     };
-
+    
     //2. Filtered out unwanted fields names that are not allowed to be updated
     const filteredBody = filterObj(req.body, 'name', 'email'); // fields that are filtered from schema fields
-
+    
     //3. UPDATE user document
     const updateUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
         new: true,
         runValidators: true
     });
-
+    
     res.status(200).json({
         status: 'success',
         data: {
@@ -64,19 +57,16 @@ exports.updateMe = catchAsync(async(req, res, next) => {
 // DELETE current user
 exports.deleteMe = catchAsync(async (req, res, next) => {
     await User.findByIdAndUpdate(req.user.id, { active: false });
-
+    
     res.status(204).json({
         status: 'success',
         data: null 
     });
 })
 
-exports.getUsers = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet defined!'
-    });
-};
+// USERS hanlders
+exports.getAllUsers = factory.getAll(User);
+exports.getUsers = factory.getOne(User);
 
 // Do NOT update passwords with this!!
 exports.updateUser = factory.updateOne(User);
