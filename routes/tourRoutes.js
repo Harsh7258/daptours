@@ -21,20 +21,20 @@ router.route('/top-5-cheap-tours').get(tourController.aliasTopTours, tourControl
 
 router.route('/tour-stats').get(tourController.getToursStats);
 
-router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
+router.route('/monthly-plan/:year').get(authController.protect, authController.restrictTo('admin', 'lead-guide', 'guide'), tourController.getMonthlyPlan);
 
 
 router
 .route('/')
-.get(authController.protect, tourController.getAllTours)
-.post(tourController.createTour);
+.get( tourController.getAllTours)
+.post(authController.protect, authController.restrictTo('admin', 'lead-guide'), tourController.createTour);
 // chaining mutliple middlewares
 // PROTECT middleware runs first then getAllTours to check if user is logged in(autherization token).
 
 router
 .route('/:id')
 .get(tourController.getTour)
-.patch(tourController.updateTour)
+.patch(authController.restrictTo('admin', 'lead-guide'),tourController.updateTour)
 .delete(authController.protect, authController.restrictTo('admin', 'lead-guide'), tourController.deleteTour);
 
 
