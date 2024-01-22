@@ -92,6 +92,7 @@ exports.getAll = Model => catchAsync(async (req, res, next) => {
     // then query string (req.query)
     // class methods used to manipulate query
 
+    // const doc= await features.query.explain(); 
     const doc= await features.query; 
 
         // SEND RESPONSE

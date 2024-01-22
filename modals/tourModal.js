@@ -36,7 +36,8 @@ const tourSchema = new mongoose.Schema({
         type: Number,
         default: 4.5,
         min: [1, 'Rating must be above 1.0'],
-        max: [5, 'Rating must be below 5.0']
+        max: [5, 'Rating must be below 5.0'],
+        set: val => Math.round(val * 10) / 10 // setter function for rounding the value
     },
     ratingsQuantity: {
         type: Number,
@@ -116,6 +117,10 @@ const tourSchema = new mongoose.Schema({
     // when we have virtual property bascially a field that is not stored in the database but calcalated using other value (shows up whenever there is output)
 });
 // mongoose.Schema to specify a schema for data
+
+// FIELD indexes: improving reading with INDEXES.
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
 
 // VIRTUAL PROPERTIES (adv. mongoose)
 tourSchema.virtual('duratinInWEEKS').get(function() {
