@@ -1,6 +1,6 @@
 const Tour = require('./../modals/tourModal');
 const catchAsync = require('./../utils/catchAsync');
-// const AppError = require('./../utils/appError');
+const AppError = require('./../utils/appError');
 const factory = require('./handlerFactory');
 
 // const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
@@ -111,4 +111,61 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
             }
         });
         // console.log(plan);
+});
+
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+    const { distance, laglng, unit } = req.params;
+    const [lag, lng] = laglng.split(',');
+    const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
+
+    if(!lag || !lng) {
+        next(new AppError('pLEASE PROVIDE lagitude and longitude in the format lag, lng.', 400));
+    };
+
+    const tours = await Tour.find({ startLocation: { $geoWithin: { $centerSphere: [[lng, lag], radius] } } });
+
+    res.status(200).json({
+        status: 'success',
+        results: tours.length,
+        data: {
+            data: tours
+        }
+    });
+});
+
+exports.getDistances = catchAsync(async (req, res, next) => {
+    const { laglng, unit } = req.params;
+    const [lag, lng] = laglng.split(',');
+
+    const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
+
+    if(!lag || !lng) {
+        next(new AppError('pLEASE PROVIDE lagitude and longitude in the format lag, lng.', 400));
+    };
+
+    const distances = await Tour.aggregate([
+        {
+            $geoNear: {
+                near: {
+                    type: 'Point',
+                    coordinates: [lng * 1, lag * 1]
+                },
+                distanceField: 'distance',
+                distanceMultiplier: multiplier
+            }
+        },
+        {
+            $project: {
+                distance: 1,
+                name: 1
+            }
+        }
+    ]);
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            data: distances
+        }
+    });
 });

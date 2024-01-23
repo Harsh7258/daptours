@@ -54,6 +54,7 @@ reviewSchema.pre(/^find/, function(next) {
     next();
 });
 
+// Calculating average rating on TOURS (pt. 1)
 reviewSchema.statics.calcAverageRatings = async function(tourId) {
     // creating statics review for tourId
 
@@ -92,6 +93,7 @@ reviewSchema.post('save', function() {
     this.constructor.calcAverageRatings(this.tour);
 });
 
+// TOURS (pt. 2)
 // findByIdAndUpadate
 // findByIdAndDelete
 reviewSchema.pre(/^findOneAnd/, async function(next){

@@ -121,6 +121,7 @@ const tourSchema = new mongoose.Schema({
 // FIELD indexes: improving reading with INDEXES.
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
 
 // VIRTUAL PROPERTIES (adv. mongoose)
 tourSchema.virtual('duratinInWEEKS').get(function() {
@@ -177,12 +178,12 @@ tourSchema.post(/^find/, function(docs, next) {
 });
 
 // AGGREGATE MIDDLEWARE
-tourSchema.pre('aggregate', function(next) {
+// tourSchema.pre('aggregate', function(next) {
     
-    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-    console.log(this.pipeline());
-    next();
-}); // hides the secretTour from tour-stats
+//     this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//     console.log(this.pipeline());
+//     next();
+// }); // hides the secretTour from tour-stats
 
 const Tour = mongoose.model('Tour', tourSchema);
 
