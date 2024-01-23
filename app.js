@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require('path'); // creates paths to the folders
 const rateLimit = require('express-rate-limit'); 
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -7,7 +8,6 @@ const hpp = require('hpp');
 const xss = require('xss-clean');
 const morgan = require("morgan");
 // function on calling add many methods the app function. 
-
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 
@@ -17,7 +17,13 @@ const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
 
+// setting engine template PUG
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
 // 1. GLOBAL MIDDLEWARES
+// Serving static files
+app.use(express.static(path.join(__dirname, 'public'))); // .static --> serving static files
 
 // Set security HTTP headers
 app.use(helmet());
@@ -57,10 +63,6 @@ app.use(hpp({
     ]
 }));
 
-// Serving static files
-app.use(express.static(`${__dirname}/public`));
-// .static --> serving static files
-
 // Test middleware
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
@@ -79,6 +81,11 @@ app.use((req, res, next) => {
 // mounting multiple routes
 
 // 3. ROUTES
+
+app.get('/', (req, res) => {
+    res.status(200).render('base'); // .render the template { base.pug }
+}); // for rendering pages
+
 app.use('/api/v1/tours', tourRouter); // tourRouter --> middleware function
 app.use('/api/v1/users', userRouter); // userRouter --> middleware function
 app.use('/api/v1/reviews', reviewRouter); // reviewRouter --> middleware function 
