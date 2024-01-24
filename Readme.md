@@ -1,7 +1,7 @@
 # daptours
 
 using MERN stack <br>
-Tour planner website with API. <br>
+Tour planner website with API(https://documenter.getpostman.com/view/31106866/2s9YymJR44). <br>
 _JWT_EXPIRES_IN 90 DAYS_
 
 ## npm packages
@@ -29,6 +29,7 @@ _JWT_EXPIRES_IN 90 DAYS_
 13. express-mongo-sanitize --> Data sanitization
 14. hpp --> for preventing parameter pollution
 15. xss-clean --> data sanitization against XSS
+16. pug --> express template engine for rendering pages
 
 ## starting steps
 

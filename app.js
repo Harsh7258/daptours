@@ -17,7 +17,7 @@ const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
 
-// setting engine template PUG
+// setting engine template PUG: { setting up pug in express }
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -83,7 +83,10 @@ app.use((req, res, next) => {
 // 3. ROUTES
 
 app.get('/', (req, res) => {
-    res.status(200).render('base'); // .render the template { base.pug }
+    res.status(200).render('base', {
+        tour: 'Dragon ball z',
+        user: 'Goku'
+    }); // .render the template { base.pug }
 }); // for rendering pages
 
 app.use('/api/v1/tours', tourRouter); // tourRouter --> middleware function
