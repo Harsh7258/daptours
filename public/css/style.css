@@ -43,6 +43,19 @@ body {
   flex-direction: column;
 }
 
+/*scrolling bar*/
+body::-webkit-scrollbar {
+  width: 0.9rem;
+}
+body::-webkit-scrollbar-track {
+  background: #F8F6F6;
+}
+body::-webkit-scrollbar-thumb {
+  background: #3c7550;
+  border-radius: 0.2rem;
+  height: 6rem;
+}
+
 .main {
   background-color: #f7f7f7;
   padding: 8rem 6rem;
@@ -543,7 +556,7 @@ body {
 
 .section-map {
   position: relative;
-  height: 65rem;
+  height: 55rem;
   margin-top: calc(0px - var(--section-rotate));
 }
 
@@ -557,8 +570,8 @@ body {
 .marker {
   background-image: url('../img/pin.png');
   background-size: cover;
-  width: 32px;
-  height: 40px;
+  width: 30px;
+  height: 37px;
   cursor: pointer;
 }
 
@@ -571,6 +584,7 @@ body {
   font-family: 'Lato', sans-serif;
   padding: 1.5rem !important;
   font-size: 1.4rem;
+  font-weight: bold;
   -webkit-box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.15) !important;
   box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.15) !important;
 }
@@ -610,6 +624,18 @@ body {
   overflow-x:scroll;
   -ms-scroll-snap-type: x mandatory;
   scroll-snap-type: x mandatory;
+}
+
+.reviews::-webkit-scrollbar {
+  width: 0.2rem;
+}
+.reviews::-webkit-scrollbar-track {
+  background: #F8F6F6;
+}
+.reviews::-webkit-scrollbar-thumb {
+  background: #3c7550;
+  border-radius: 0.2rem;
+  height: 2rem;
 }
 .reviews__card {
   width: 30rem;
