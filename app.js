@@ -14,6 +14,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const viewsRouter = require('./routes/viewsRoutes');
 
 const app = express();
 
@@ -82,13 +83,7 @@ app.use((req, res, next) => {
 
 // 3. ROUTES
 
-app.get('/', (req, res) => {
-    res.status(200).render('base', {
-        tour: 'Dragon ball z',
-        user: 'Goku'
-    }); // .render the template { base.pug }
-}); // for rendering pages
-
+app.use('/', viewsRouter);
 app.use('/api/v1/tours', tourRouter); // tourRouter --> middleware function
 app.use('/api/v1/users', userRouter); // userRouter --> middleware function
 app.use('/api/v1/reviews', reviewRouter); // reviewRouter --> middleware function 

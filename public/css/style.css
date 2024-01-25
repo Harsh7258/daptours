@@ -143,12 +143,13 @@ body {
 .heading-primary,
 .heading-tertirary {
   color: #fff;
-  text-transform: uppercase;
+  text-transform: capitalize;
   font-weight: 300;
+  font: bolder;
 }
 .heading-primary span,
 .heading-tertirary span {
-  padding: 1rem 1.5rem;
+  padding: 0.1rem 0.9rem;
   line-height: 1;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
@@ -156,13 +157,13 @@ body {
     linear,
     left top,
     right bottom,
-    from(rgba(125, 213, 111, 0.85)),
-    to(rgba(40, 180, 135, 0.85))
+    from(rgba(125, 213, 111, 0.75)),
+    to(rgba(40, 180, 135, 0.75))
   );
   background-image: linear-gradient(
     to bottom right,
-    rgba(125, 213, 111, 0.85),
-    rgba(40, 180, 135, 0.85)
+    rgba(125, 213, 111, 0.75),
+    rgba(40, 180, 135, 0.75)
   );
 }
 
@@ -174,7 +175,7 @@ body {
 }
 
 .heading-tertirary {
-  font-size: 2.75rem;
+  font-size: 2.7rem;
   text-align: right;
   position: absolute;
   bottom: 1rem;
@@ -378,7 +379,7 @@ body {
     to(#28b487)
   );
   background-image: linear-gradient(to right bottom, #7dd56f, #28b487);
-  opacity: 0.85;
+  opacity: 0.30;
 }
 
 .heading-box {
@@ -606,7 +607,7 @@ body {
   display: grid;
   grid-column-gap: 6rem;
   grid-auto-flow: column;
-  overflow-x: scroll;
+  overflow-x:scroll;
   -ms-scroll-snap-type: x mandatory;
   scroll-snap-type: x mandatory;
 }
@@ -733,13 +734,13 @@ body {
   width: 100%;
 }
 .cta__img--1 {
-  -webkit-transform: translate(-10%, -50%) scale(0.97);
-  transform: translate(-10%, -50%) scale(0.97);
+  -webkit-transform: translate(-5%, -50%) scale(0.97);
+  transform: translate(-5%, -50%) scale(0.97);
   z-index: 9;
 }
 .cta__img--2 {
-  -webkit-transform: translate(15%, -50%) scale(0.94);
-  transform: translate(15%, -50%) scale(0.94);
+  -webkit-transform: translate(20%, -50%) scale(0.94);
+  transform: translate(20%, -50%) scale(0.94);
   z-index: 8;
 }
 .cta__content {
@@ -1118,7 +1119,7 @@ body {
     to(#28b487)
   );
   background-image: linear-gradient(to right bottom, #7dd56f, #28b487);
-  opacity: 0.7;
+  opacity: 0.35;
 }
 .card__picture-img {
   -o-object-fit: cover;
