@@ -3,6 +3,7 @@ const path = require('path'); // creates paths to the folders
 const rateLimit = require('express-rate-limit'); 
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
+const cookieParser = require('cookie-parser');
 const hpp = require('hpp');
 // const  sanitizeHTML = require('sanitize-html');
 const xss = require('xss-clean');
@@ -46,6 +47,7 @@ app.use('/api', limiter); //middleware
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' })); // sets middleware
+app.use(cookieParser());
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -67,7 +69,7 @@ app.use(hpp({
 // Test middleware
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
-    // console.log(req.headers);
+    // console.log(req.cookies);
     next();
 });
 
