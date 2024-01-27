@@ -1,4 +1,9 @@
 config.env
 
-bundle.js
-bundle.js.map
+/public/js/bundle.js
+/public/js/bundle.js.map
+/public/js/mapbox.js
+/public/js/index.js
+/public/js/alert.js
+
+node_modules/

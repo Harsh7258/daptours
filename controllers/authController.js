@@ -19,7 +19,7 @@ const createSendToken = (user, statusCode, res) => {
         expires: new Date(
             Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
         ),
-        httpOnly: true
+        httpOnly: true // helps to prevent manipulation of cookie in browser
     };
     if(process.env.NODE_ENV === 'production') cookieOptions.secure = ture;
 
@@ -70,6 +70,15 @@ exports.login = catchAsync(async(req, res, next) => {
     createSendToken(user, 200, res);
 });
 
+exports.logout = (req, res, next) => {
+    res.cookie('jwt', 'loggedout', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+
+    res.status(200).json({ status: 'success' });
+}
+
 // PROTECTING TOUR ROUTES
 exports.protect = catchAsync(async (req, res, next) => {
     let token;
@@ -111,28 +120,32 @@ exports.protect = catchAsync(async (req, res, next) => {
 }); // middleware
 
 // Only for rendered pages, no errors!!
-exports.isLoggedIn= catchAsync(async (req, res, next) => {
-    if (req.cookies.jwt){
-        // 1. verify token
-        const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
-
-        // 2. check if user still exists
-        const currentUser = await User.findById(decoded.id);
-        if(!currentUser) {
-            return next();
-        }; 
-
-        // 3. check if user changed password after the token was issued
-        if (currentUser.changedPasswordAfter(decoded.iat)) {
-             return next();
-        };
-
-        // THERE IS LOGGED IN USER
-        res.locals.user = currentUser;
-        return next(); //leads to next middleware
+exports.isLoggedIn= async (req, res, next) => {
+    try {
+        if (req.cookies.jwt){
+            // 1. verify token
+            const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+    
+            // 2. check if user still exists
+            const currentUser = await User.findById(decoded.id);
+            if(!currentUser) {
+                return next();
+            }; 
+    
+            // 3. check if user changed password after the token was issued
+            if (currentUser.changedPasswordAfter(decoded.iat)) {
+                 return next();
+            };
+    
+            // THERE IS LOGGED IN USER
+            res.locals.user = currentUser;
+            return next(); //leads to next middleware
+        }
+    } catch (error) {
+        return next();
     }
     next();
-}); // middleware
+}; // middleware
 
 exports.restrictTo = (...roles) => {
     return (req, res, next) => {
