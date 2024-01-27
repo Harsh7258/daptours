@@ -30,6 +30,10 @@ _JWT_EXPIRES_IN 90 DAYS_
 14. hpp --> for preventing parameter pollution
 15. xss-clean --> data sanitization against XSS
 16. pug --> express template engine for rendering pages
+17. axios --> fetching API
+18. cookie-parser --> parse cookie in browser
+19. @babel/ployfill
+20. parcel-bundler --> making file bundles
 
 ## starting steps
 
@@ -61,3 +65,9 @@ Setting UP environment in postman
 EMAIL Testing with https://mailtrap.io <br>
 Sends Dummy mails to check the functionality of modemailer and resetToken.<br>
 Sending email nodemailer.
+
+### Parcel- bundler
+
+package.json -- "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
+"build:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
+terminal -- npm run watch:js 1. to create bundle of files 2.
