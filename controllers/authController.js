@@ -92,7 +92,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     // console.log(token);
 
     if(!token) {
-        return next(new AppError('You are not logged in! Please log in.', 401));
+        return next(new AppError('You are not logged in! Please log in to get access.', 401));
     };
     
     // 2. verifiction token
@@ -115,6 +115,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
     //GRANT ACCESS TO PROTECTED ROUTE
     req.user = currentUser;
+    res.locals.user = currentUser;
     next(); //leads to next middleware
 
 }); // middleware

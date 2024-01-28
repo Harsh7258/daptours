@@ -25,38 +25,61 @@ const handleValidationError = err => {
 
 // ERRORS DURING DEVELOPMENT AND PRODUCTION
 
-const sendErrorDev = (err, res) => {
-    res.status(err.statusCode).json({
-        status: err.status,
-        error: err,
-        message: err.message,
-        stack: err.stack
-    });
-};
-
-const sendErrorProd = (err, res) => {
-    // Operational, trusted error: send message to client
-    if(err.isOperational) {
-        res.status(err.statusCode).json({
+const sendErrorDev = (err, req, res) => {
+    //API
+    if(req.originalUrl.startsWith('/api')){
+        return res.status(err.statusCode).json({
             status: err.status,
-            message: err.message
+            error: err,
+            message: err.message,
+            stack: err.stack
         });
-
-        // Programming or other unknown error: dont leak error details
     } else {
-        // log error
-        // console.error('ERROR', err);
-
-        // send error meassage
-        res.status(500).json({
-            status: 'Error',
-            message: 'Something went wrong!!'
+        // rendered website
+        return res.status(err.statusCode).render('error', {
+            title: 'Something went wrong!!',
+            message: err.message
         });
     };
 };
 
-// PROTECTING TOUR ROUTES
+const sendErrorProd = (err, req, res) => {
+    // 1. API
+    if(req.originalUrl.startsWith('/api')){
+        // Operational, trusted error: send message to client
+        if(err.isOperational) {
+            res.status(err.statusCode).json({
+                status: err.status,
+                message: err.message
+            });
+            // 2. Programming or other unknown error: dont leak error details
+        } 
+            // log error
+            // console.error('ERROR', err);
+    
+            // send error meassage
+            return res.status(500).json({
+                status: 'Error',
+                message: 'Something went wrong!!'
+            });
+    }
 
+    // RENDERED WEBSITE
+    if(err.isOperational){
+        return res.status(err.statusCode).render('error', {
+            title: 'Something went wrong!!',
+            message: err.message
+        });
+        // Programming or other unknown error: dont leak error details
+    }
+        // 2. Send generic message
+        return res.status(500).json({
+            status: 'Error',
+            message: 'Please try again later.'
+        });
+};
+
+// PROTECTING TOUR ROUTES
 const handleJsonWebTokenError = () => new AppError('INVAILD JWT!!', 401);
 const handleExpiredJWT = () => new AppError('JWT is expired!, Please Login Again.', 401);
 
@@ -67,9 +90,10 @@ module.exports = (err, req, res, next) => {
     err.status = err.status || 'error';
     
     if(process.env.NODE_ENV === 'development'){
-        sendErrorDev(err, res);
+        sendErrorDev(err, req, res);
     } else if (process.env.NODE_ENV === 'production') {
         let error = { ...err };
+        error.message = err.message;
 
         if (error.name === 'CastError') error = handleCastErrorDB(error); 
         // if(error.code === 11000) error = handleDuplicateFields(error);
@@ -77,6 +101,6 @@ module.exports = (err, req, res, next) => {
         if(error.name === 'JsonWebTokenError') error = handleJsonWebTokenError();
         if(error.name === 'TokenExpiredError') error = handleExpiredJWT();
 
-        sendErrorProd(error, res);
+        sendErrorProd(error, req, res);
     };
 };

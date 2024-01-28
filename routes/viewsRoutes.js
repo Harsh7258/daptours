@@ -5,12 +5,14 @@ const viewsController = require('./../controllers/viewsController');
 
 const router = express.Router();
 
-router.use(authController.isLoggedIn);
-
 // Extending our base template with BLOCKS
-router.get('/', viewsController.getOverview);
-router.get('/tour/:slug', viewsController.getTour);
-router.get('/login', viewsController.logIn);
-router.get('/signup', viewsController.signUp);
+router.get('/', authController.isLoggedIn, viewsController.getOverview);
+router.get('/tour/:slug', authController.isLoggedIn, viewsController.getTour);
+router.get('/login', authController.isLoggedIn, viewsController.logIn);
+router.get('/signup', authController.isLoggedIn, viewsController.signUp);
+router.get('/me', authController.protect, viewsController.getAccount);
+
+router.post('/submit-user-data', authController.protect, viewsController.updateUserData);
+
 
 module.exports = router;
