@@ -34,6 +34,8 @@ _JWT_EXPIRES_IN 90 DAYS_
 18. cookie-parser --> parse cookie in browser
 19. @babel/ployfill
 20. parcel-bundler --> making file bundles
+21. multer --> uploading files
+22. sharp --> to resize the images
 
 ## starting steps
 
