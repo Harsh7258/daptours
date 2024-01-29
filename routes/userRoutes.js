@@ -20,7 +20,7 @@ router.use(authController.protect); // PROTECT middleware used for login
 
 router.patch('/updateMyPassword', authController.updatePassword);
 router.route('/me').get( userController.getMe, userController.getUsers);
-router.patch('/updateMe', userController.updateMe);
+router.patch('/updateMe', userController.uploadUserPhoto, userController.resizeUserPhoto, userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);
 
 router.use(authController.restrictTo('admin'));
