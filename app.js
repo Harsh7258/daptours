@@ -8,7 +8,8 @@ const hpp = require('hpp');
 // const  sanitizeHTML = require('sanitize-html');
 const xss = require('xss-clean');
 const morgan = require("morgan");
-// function on calling add many methods the app function. 
+// function on calling add many methods the app function.
+const compression = require('compression'); 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 
@@ -30,6 +31,8 @@ app.use(express.static(path.join(__dirname, 'public'))); // .static --> serving 
 
 // Set security HTTP headers
 app.use(helmet());
+
+app.use(compression());
 
 // Development Logging
 if(!process.env.NODE_ENV === 'development') {
