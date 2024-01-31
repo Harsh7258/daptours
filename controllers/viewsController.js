@@ -1,7 +1,8 @@
 const Tour = require('./../modals/tourModal');
+const User = require('../modals/userModal');
+const Booking = require('../modals/bookingModal');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
-const User = require('../modals/userModal');
 
 exports.getOverview = catchAsync(async (req, res) => {
     // 1. Get tour data from collection
@@ -45,6 +46,21 @@ exports.signUp = (req, res) => {
         title: 'Login to your account'
     });
 };
+
+// Rendering a User's Booked Tours
+exports.getMyTours = catchAsync(async(req, res, next) => {
+    // 1. Find all bookings
+    const bookings = await Booking.find({ user: req.user.id });
+
+    // 2. Find tours with the returned IDs
+    const tourIDs = bookings.map(el => el.tour);
+    const tours = await Tour.find({ _id: { $in: tourIDs } });
+
+    res.status(200).render('overview',{
+        title: 'My Tours',
+        tours
+    });
+});
 
 // BUILDING the USER account page
 exports.getAccount = (req, res) => {
