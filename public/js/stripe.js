@@ -1,8 +1,9 @@
 import axios from "axios";
+import { loadStripe } from "@stripe/stripe-js";
 import { showAlert } from "./alert";
 
 // const stripe = Stripe(`${process.env.STRIPE_PUBLIC_KEY}`);
-const stripe = Stripe('pk_test_51OeYEkSDNkTUJihyqRsJ9b8lZQuTgmvYgjE1AZ7pjzFje2AAYZ1znaIviE90TPny0g4iDrMYRxRHy810jGHQrHgh009VVGqtKp');
+var stripe = loadStripe('pk_test_51OeYEkSDNkTUJihyqRsJ9b8lZQuTgmvYgjE1AZ7pjzFje2AAYZ1znaIviE90TPny0g4iDrMYRxRHy810jGHQrHgh009VVGqtKp');
 
 export const bookTour = async tourId => {
     // 1. Get checkout session from API

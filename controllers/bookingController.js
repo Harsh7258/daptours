@@ -3,6 +3,7 @@ const Tour = require('./../modals/tourModal');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./handlerFactory');
+const Booking = require('../modals/bookingModal');
 
 exports.getCheckout = catchAsync(async (req, res, next) => {
     // 1) Get the currently booked tour
@@ -40,3 +41,12 @@ exports.getCheckout = catchAsync(async (req, res, next) => {
       session
     });
   });
+
+exports.createBookingCheckout = catchAsync(async (req, res, next) => {
+  const { tour, user, price } = req.query;
+
+  if(!tour && !user && !price) return next();
+  await Booking.create({ tour, user, price });
+
+  res.redirect(req.originalUrl.split('?')[0]);
+}); 

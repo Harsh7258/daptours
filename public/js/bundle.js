@@ -12159,7 +12159,159 @@ var updateSettings = exports.updateSettings = /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }();
-},{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"stripe.js":[function(require,module,exports) {
+},{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"../../node_modules/@stripe/stripe-js/dist/stripe.esm.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.loadStripe = void 0;
+var V3_URL = 'https://js.stripe.com/v3';
+var V3_URL_REGEX = /^https:\/\/js\.stripe\.com\/v3\/?(\?.*)?$/;
+var EXISTING_SCRIPT_MESSAGE = 'loadStripe.setLoadParameters was called but an existing Stripe.js script already exists in the document; existing script parameters will be used';
+var findScript = function findScript() {
+  var scripts = document.querySelectorAll("script[src^=\"".concat(V3_URL, "\"]"));
+  for (var i = 0; i < scripts.length; i++) {
+    var script = scripts[i];
+    if (!V3_URL_REGEX.test(script.src)) {
+      continue;
+    }
+    return script;
+  }
+  return null;
+};
+var injectScript = function injectScript(params) {
+  var queryString = params && !params.advancedFraudSignals ? '?advancedFraudSignals=false' : '';
+  var script = document.createElement('script');
+  script.src = "".concat(V3_URL).concat(queryString);
+  var headOrBody = document.head || document.body;
+  if (!headOrBody) {
+    throw new Error('Expected document.body not to be null. Stripe.js requires a <body> element.');
+  }
+  headOrBody.appendChild(script);
+  return script;
+};
+var registerWrapper = function registerWrapper(stripe, startTime) {
+  if (!stripe || !stripe._registerWrapper) {
+    return;
+  }
+  stripe._registerWrapper({
+    name: 'stripe-js',
+    version: "2.4.0",
+    startTime: startTime
+  });
+};
+var stripePromise = null;
+var onErrorListener = null;
+var onLoadListener = null;
+var onError = function onError(reject) {
+  return function () {
+    reject(new Error('Failed to load Stripe.js'));
+  };
+};
+var onLoad = function onLoad(resolve, reject) {
+  return function () {
+    if (window.Stripe) {
+      resolve(window.Stripe);
+    } else {
+      reject(new Error('Stripe.js not available'));
+    }
+  };
+};
+var loadScript = function loadScript(params) {
+  // Ensure that we only attempt to load Stripe.js at most once
+  if (stripePromise !== null) {
+    return stripePromise;
+  }
+  stripePromise = new Promise(function (resolve, reject) {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      // Resolve to null when imported server side. This makes the module
+      // safe to import in an isomorphic code base.
+      resolve(null);
+      return;
+    }
+    if (window.Stripe && params) {
+      console.warn(EXISTING_SCRIPT_MESSAGE);
+    }
+    if (window.Stripe) {
+      resolve(window.Stripe);
+      return;
+    }
+    try {
+      var script = findScript();
+      if (script && params) {
+        console.warn(EXISTING_SCRIPT_MESSAGE);
+      } else if (!script) {
+        script = injectScript(params);
+      } else if (script && onLoadListener !== null && onErrorListener !== null) {
+        var _script$parentNode;
+
+        // remove event listeners
+        script.removeEventListener('load', onLoadListener);
+        script.removeEventListener('error', onErrorListener); // if script exists, but we are reloading due to an error,
+        // reload script to trigger 'load' event
+
+        (_script$parentNode = script.parentNode) === null || _script$parentNode === void 0 ? void 0 : _script$parentNode.removeChild(script);
+        script = injectScript(params);
+      }
+      onLoadListener = onLoad(resolve, reject);
+      onErrorListener = onError(reject);
+      script.addEventListener('load', onLoadListener);
+      script.addEventListener('error', onErrorListener);
+    } catch (error) {
+      reject(error);
+      return;
+    }
+  }); // Resets stripePromise on error
+
+  return stripePromise["catch"](function (error) {
+    stripePromise = null;
+    return Promise.reject(error);
+  });
+};
+var initStripe = function initStripe(maybeStripe, args, startTime) {
+  if (maybeStripe === null) {
+    return null;
+  }
+  var stripe = maybeStripe.apply(undefined, args);
+  registerWrapper(stripe, startTime);
+  return stripe;
+}; // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+
+var stripePromise$1;
+var loadCalled = false;
+var getStripePromise = function getStripePromise() {
+  if (stripePromise$1) {
+    return stripePromise$1;
+  }
+  stripePromise$1 = loadScript(null)["catch"](function (error) {
+    // clear cache on error
+    stripePromise$1 = null;
+    return Promise.reject(error);
+  });
+  return stripePromise$1;
+}; // Execute our own script injection after a tick to give users time to do their
+// own script injection.
+
+Promise.resolve().then(function () {
+  return getStripePromise();
+})["catch"](function (error) {
+  if (!loadCalled) {
+    console.warn(error);
+  }
+});
+var loadStripe = exports.loadStripe = function loadStripe() {
+  for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+    args[_key] = arguments[_key];
+  }
+  loadCalled = true;
+  var startTime = Date.now(); // if previous attempts are unsuccessful, will re-load script
+
+  return getStripePromise().then(function (maybeStripe) {
+    return initStripe(maybeStripe, args, startTime);
+  });
+};
+},{}],"stripe.js":[function(require,module,exports) {
 var define;
 "use strict";
 
@@ -12168,6 +12320,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.bookTour = void 0;
 var _axios = _interopRequireDefault(require("axios"));
+var _stripeJs = require("@stripe/stripe-js");
 var _alert = require("./alert");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
@@ -12175,7 +12328,7 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 // const stripe = Stripe(`${process.env.STRIPE_PUBLIC_KEY}`);
-var stripe = Stripe('pk_test_51OeYEkSDNkTUJihyqRsJ9b8lZQuTgmvYgjE1AZ7pjzFje2AAYZ1znaIviE90TPny0g4iDrMYRxRHy810jGHQrHgh009VVGqtKp');
+var stripe = (0, _stripeJs.loadStripe)('pk_test_51OeYEkSDNkTUJihyqRsJ9b8lZQuTgmvYgjE1AZ7pjzFje2AAYZ1znaIviE90TPny0g4iDrMYRxRHy810jGHQrHgh009VVGqtKp');
 var bookTour = exports.bookTour = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(tourId) {
     var session;
@@ -12211,7 +12364,7 @@ var bookTour = exports.bookTour = /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }();
-},{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"index.js":[function(require,module,exports) {
+},{"axios":"../../node_modules/axios/index.js","@stripe/stripe-js":"../../node_modules/@stripe/stripe-js/dist/stripe.esm.js","./alert":"alert.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 require("core-js/modules/es6.array.copy-within.js");
@@ -12459,7 +12612,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51950" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54160" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
