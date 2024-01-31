@@ -16,6 +16,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const viewsRouter = require('./routes/viewsRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
 
 const app = express();
 
@@ -90,6 +91,7 @@ app.use('/', viewsRouter);
 app.use('/api/v1/tours', tourRouter); // tourRouter --> middleware function
 app.use('/api/v1/users', userRouter); // userRouter --> middleware function
 app.use('/api/v1/reviews', reviewRouter); // reviewRouter --> middleware function 
+app.use('/api/v1/bookings', bookingRouter); // bookingRouter --> middleware function
 
 // HANDLING UNHANDLED ROUTES
 app.all('*', (req, res, next) => {
