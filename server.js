@@ -47,3 +47,10 @@ process.on('unhandledRejection', err => {
     }); // giving time to finish all the request to handled and then closed
 
 }); // for database connection error
+
+// process.on('SIGTERM', () => {
+//     console.log('SIGTERM received. Shutting down....');
+//     server.close(() => {
+//         console.log('Process terminated!');
+//     })
+// });
